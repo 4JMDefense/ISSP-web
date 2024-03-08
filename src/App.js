@@ -3,6 +3,7 @@ import "./App.css";
 import LineChart from "./components/LineChart";
 import { UserData } from "./Data";
 
+
 function findHighestValues(data) {
   const highestValues = {};
 
@@ -26,7 +27,9 @@ function findHighestValues(data) {
 
 
 function App() {
+
   const [altitudeData, setAltitudeData] = useState({
+    
     labels: UserData.map((data) => data.time),
     datasets: [
       {
@@ -43,6 +46,7 @@ function App() {
         borderWidth: 2,
       },
     ],
+    
   });
 
   const [xaccelData, setXaccelData] = useState({
@@ -183,27 +187,27 @@ function App() {
       </div>
 
       <div style={{ width: 700 }}>
-        <LineChart chartData={xaccelData} /> {/* Render BarChart with xaccelData */}
+        <LineChart chartData={xaccelData} /> 
       </div>
       
       <div style={{ width: 700 }}>
-        <LineChart chartData={yaccelData} /> {/* Render BarChart with xaccelData */}
+        <LineChart chartData={yaccelData} /> 
       </div>
 
       <div style={{ width: 700 }}>
-        <LineChart chartData={zaccelData} /> {/* Render BarChart with xaccelData */}
+        <LineChart chartData={zaccelData} /> 
       </div>
 
       <div style={{ width: 700 }}>
-        <LineChart chartData={elevatorData} /> {/* Render BarChart with xaccelData */}
+        <LineChart chartData={elevatorData} /> 
       </div>
 
       <div style={{ width: 700 }}>
-        <LineChart chartData={aileronData} /> {/* Render BarChart with xaccelData */}
+        <LineChart chartData={aileronData} /> 
       </div>
 
       <div style={{ width: 700 }}>
-        <LineChart chartData={rudderData} /> {/* Render BarChart with xaccelData */}
+        <LineChart chartData={rudderData} /> 
       </div>
 
     </div>

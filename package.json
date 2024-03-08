@@ -1,6 +1,4 @@
 {
-  "homepage": "http://machadop1407.github.io/chartjs-react-tutorial",
-  "name": "chartjs-tut",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,13 +6,16 @@
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
     "chart.js": "^3.7.0",
+    "chartjs-plugin-zoom": "^2.0.1",
     "csv-parser": "^3.0.0",
     "fs": "^0.0.1-security",
+    "papaparse": "^5.4.1",
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.1",
     "react-dom": "^17.0.2",
     "react-scripts": "^5.0.0",
     "scripts": "^0.1.0",
+    "stream-browserify": "^3.0.0",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
