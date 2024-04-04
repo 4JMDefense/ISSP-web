@@ -49,6 +49,17 @@ function App() {
 
   return (
     <div className="App">
+      <nav className="navbar">
+        <a href="#" className="nav-brand">Flight Data Dashboard</a>
+        <div className="dropdown">
+          <button className="dropbtn">Charts</button>
+          <div className="dropdown-content">
+            {chartsInfo.map(({ key, label }) => (
+              <a href="#" key={key}>{label}</a>
+            ))}
+          </div>
+        </div>
+      </nav>
       <h1>Flight Data Charts</h1>
       <div>
         {Object.entries(highestValues).map(([key, value]) => (
@@ -56,7 +67,7 @@ function App() {
         ))}
       </div>
       {chartsInfo.map(({ key }) => chartData[key] && (
-        <div key={key} style={{ width: 700 }}>
+        <div key={key} className="chart-container">
           <LineChart chartData={chartData[key]} />
         </div>
       ))}
@@ -65,4 +76,3 @@ function App() {
 }
 
 export default App;
-
