@@ -47,22 +47,80 @@ function App() {
 
   const highestValues = findHighestValues(UserData);
 
+//   return (
+//     <div className="App">
+//       <div className="mainbar">
+//       <h1>Flight Data Charts</h1>
+
+        
+//         <div>
+//           {Object.entries(highestValues).map(([key, value]) => (
+//             <p key={key}>Max {key}: {value}{['elevator', 'aileron', 'rudder'].includes(key) ? '°' : ''}</p>
+//           ))}
+//         </div>
+//         <h1>Files Menu</h1>
+
+//       </div>
+      
+//       <div className="sidebar">
+        
+//         {chartsInfo.map(({ key }) => chartData[key] && (
+//           <div key={key} style={{ width: 700 }}>
+//             <LineChart chartData={chartData[key]} />
+//           </div>
+
+//         ))}
+
+        
+//         </div>
+
+//     </div>
+//   );
+// }
+
+
+
   return (
     <div className="App">
-      <h1>Flight Data Charts</h1>
-      <div>
-        {Object.entries(highestValues).map(([key, value]) => (
-          <p key={key}>Max {key}: {value}{['elevator', 'aileron', 'rudder'].includes(key) ? '°' : ''}</p>
-        ))}
-      </div>
-      {chartsInfo.map(({ key }) => chartData[key] && (
-        <div key={key} style={{ width: 700 }}>
-          <LineChart chartData={chartData[key]} />
+      <nav className="navbar">
+        <a href="#" className="nav-brand">Flight Data Dashboard</a>
+        <div className="dropdown">
+          <button className="dropbtn">Charts</button>
+          <div className="dropdown-content">
+            {chartsInfo.map(({ key, label }) => (
+              <a href="#" key={key}>{label}</a>
+            ))}
+          </div>
         </div>
-      ))}
+      </nav>
+
+      <div className="mainbar">
+      <h1>Current file:</h1>
+
+          
+          <div>
+            {Object.entries(highestValues).map(([key, value]) => (
+              <p key={key}>Max {key}: {value}{['elevator', 'aileron', 'rudder'].includes(key) ? '°' : ''}</p>
+            ))}
+          </div>
+          
+
+        </div>
+        
+        <div className="sidebar">
+          
+          {chartsInfo.map(({ key }) => chartData[key] && (
+            <div key={key} style={{ width: 700 }}>
+              <LineChart chartData={chartData[key]} />
+            </div>
+
+          ))}
+
+          
+          </div>
     </div>
   );
-}
+  }
 
-export default App;
+  export default App;
 
