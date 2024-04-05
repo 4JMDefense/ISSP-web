@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const credentials = require('./awsCredentials');
-const bucketName = 'trailspace-sim-output';
+const bucketName = 'test-issp';
 
 // Set AWS credentials
 AWS.config.update(credentials);
@@ -15,12 +15,12 @@ async function listObjects() {
     };
     
     const data = await s3.listObjectsV2(params).promise();
-    let objectsList = Array();
+    let objectsList = [];
     data.Contents.forEach(obj => {
       objectsList.push(obj.Key)
     })
 
-    if (objectsList.length == 0) {
+    if (objectsList.length === 0) {
       throw new Error('Bucket is empty!')
     }
 
@@ -48,7 +48,8 @@ async function getObjectText(objectKey) {
   }
 }
 
-export { listObjects, getObjectText }; //IDK HOW TO EXPORT IN REACT I'M SORRY
+module.exports = { listObjects, getObjectText };
+
 
 // Test retrieval of object data
 // (async () => {

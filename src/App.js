@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import "./App.css";
 import LineChart from "./components/LineChart";
-import { UserData } from "./Data";
+import { listObjects, getObjectText } from "./csvFromBucketHandler";
 
 function findHighestValues(data) {
   const highestValues = {};
@@ -25,8 +25,72 @@ const chartsInfo = [
   { key: 'rudder', label: 'Flight Data Rudder' }
 ];
 
+const parseData = (csvData) => {
+  const lines = csvData.trim().split('\n');
+  const headers = lines.shift().split(',');
+  let flightDuration = null;
+  let reward = null;
+
+  const flightData = lines.reduce((accumulator, line, index) => {
+    if (index < 1 || index % 200 === 0) {
+      const values = line.split(',');
+      const flightEntry = {};
+      headers.forEach((header, i) => {
+        if (header === 'altitude' || header === 'xaccel' || header === 'yaccel' || header === 'zaccel' || header === 'elevator' || header === 'aileron' || header === 'rudder' || !chartsInfo.find(info => info.key === header)) {
+          flightEntry[header] = parseFloat(values[i]);
+        }
+          else if (header === 'Flight Duration') {
+          flightDuration = parseFloat(values[i]);
+        } else if (header === 'Reward') {
+          reward = parseFloat(values[i]);
+        }
+      });
+      flightEntry.time = index + 1;
+      accumulator.push(flightEntry);
+    }
+    return accumulator;
+  }, []);
+
+  flightData.forEach(entry => {
+    entry['Flight Duration'] = flightDuration;
+    entry['Reward'] = reward;
+  });
+
+  return flightData;
+};
+
 function App() {
+  const [objectList, setObjectList] = useState([]);
+  const [objectText, setObjectText] = useState('');
   const [chartData, setChartData] = useState({});
+  const [objectData, setObjectData] = useState(null);
+  const [UserData, setUserData] = useState([]);
+  const [currentlySelectedFile, setCurrentlySelectedFile] = useState("");
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const objects = await listObjects();
+        setObjectList(objects);
+      } catch (error) {
+        console.error("Error fetching S3 data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const fetchObjectText = async (objectKey) => {
+    try {
+      const text = await getObjectText(objectKey);
+      setObjectText(text);
+      setCurrentlySelectedFile(objectKey);
+      const parsedData = parseData(text);
+      setUserData(parsedData);
+    } catch (error) {
+      console.error("Error fetching object text:", error);
+    }
+  };
 
   useEffect(() => {
     const initialChartData = chartsInfo.reduce((acc, { key, label }) => {
@@ -43,9 +107,11 @@ function App() {
       return acc;
     }, {});
     setChartData(initialChartData);
-  }, []);
+  }, [UserData]);
 
   const highestValues = findHighestValues(UserData);
+  delete highestValues['Flight Duration'];
+  delete highestValues['Reward'];
 
   return (
     <div className="App">
@@ -54,23 +120,32 @@ function App() {
         <div className="dropdown">
           <button className="dropbtn">Charts</button>
           <div className="dropdown-content">
-            {chartsInfo.map(({ key, label }) => (
-              <a href="#" key={key}>{label}</a>
+            {objectList.map((objectKey, index) => (
+              <li key={index}>
+                {objectKey}
+                <button onClick={() => fetchObjectText(objectKey)}>Fetch Data</button>
+              </li>
             ))}
           </div>
         </div>
       </nav>
-      <h1>Flight Data Charts</h1>
-      <div>
-        {Object.entries(highestValues).map(([key, value]) => (
-          <p key={key}>Max {key}: {value}{['elevator', 'aileron', 'rudder'].includes(key) ? '°' : ''}</p>
+
+      <div className="mainbar">
+        <h1>Current file: {currentlySelectedFile}</h1>
+        <div>
+          {Object.entries(highestValues).map(([key, value]) => (
+            <p key={key}>Max {key}: {value}{['elevator', 'aileron', 'rudder'].includes(key) ? '°' : ''}</p>
+          ))}
+        </div>
+      </div>
+
+      <div className="sidebar">
+        {chartsInfo.map(({ key }) => chartData[key] && (
+          <div key={key} style={{ width: 700 }}>
+            <LineChart chartData={chartData[key]} />
+          </div>
         ))}
       </div>
-      {chartsInfo.map(({ key }) => chartData[key] && (
-        <div key={key} className="chart-container">
-          <LineChart chartData={chartData[key]} />
-        </div>
-      ))}
     </div>
   );
 }
